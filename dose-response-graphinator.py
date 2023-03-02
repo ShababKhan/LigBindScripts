@@ -53,11 +53,10 @@ y = df[df.columns[int(activity_column)-1]]
 
 # fit dose-response curves to ll4 model
 popt, r2 = fit_ll4(x, y)
-
-print(popt)
+hill_slope = popt[3]
 
 xz = np.linspace(np.min(x), np.max(y), 100)
 yz = ll4(xz, popt[0], popt[1], popt[2], popt[3])
 plt.plot(xz, yz, '-'), plt.plot(x, y, 'o')
-plt.title('Dose-response curve - EC50: {}, R\u00b2 of fit: {}'.format(np.round(popt[2], 2), np.round(r2, 3)))
+plt.title('Dose-response curve - EC50: {}, \nHills slope: {}, R\u00b2 of fit: {}'.format(np.round(popt[2], 2), np.round(hill_slope, 2), np.round(r2, 3)))
 plt.show()
