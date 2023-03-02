@@ -5,6 +5,7 @@ import pandas as pd
 from scipy.optimize import curve_fit
 import matplotlib.pyplot as plt
 import seaborn as sns
+import os
 
 sns.set()
 
@@ -38,7 +39,11 @@ def fit_ll4(x, y):
     return popt, r_squared
 
 # example data
-df = pd.read_csv('example-data.csv')
+cwd = os.getcwd()
+filename = input("Enter the name of the file (with extension): ")
+
+df = pd.read_csv(cwd + '/' + filename)
+
 dose_column = input("Which one is the dose column? 1 is {} and 2 is {}: ".format(list(df.columns)[0], list(df.columns)[1]))
 activity_column = input("Which one is the activity column? 1 is {} and 2 is {}: ".format(list(df.columns)[0], list(df.columns)[1]))
 
