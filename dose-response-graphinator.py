@@ -41,11 +41,19 @@ def fit_ll4(x, y):
 # example data
 cwd = os.getcwd()
 filename = input("Enter the name of the file (with extension): ")
+try:
+    df = pd.read_csv(cwd + '/' + filename, sep = ',')
+except:
+    df = pd.read_csv(cwd + '/' + filename, sep = '\t')
 
-df = pd.read_csv(cwd + '/' + filename)
 
 dose_column = input("Which one is the dose column? 1 is {} and 2 is {}: ".format(list(df.columns)[0], list(df.columns)[1]))
 activity_column = input("Which one is the activity column? 1 is {} and 2 is {}: ".format(list(df.columns)[0], list(df.columns)[1]))
+
+# from df, drop all rows with zero in the dose column
+df = df[df[df.columns[int(dose_column)-1]] != 0]
+# transform dose column to log10
+df[df.columns[int(dose_column)-1]] = np.log10(df[df.columns[int(dose_column)-1]])
 
 x = df[df.columns[int(dose_column)-1]]
 y = df[df.columns[int(activity_column)-1]]
@@ -55,8 +63,12 @@ y = df[df.columns[int(activity_column)-1]]
 popt, r2 = fit_ll4(x, y)
 hill_slope = popt[3]
 
-xz = np.linspace(np.min(x), np.max(y), 100)
+xz = np.linspace(np.min(x), np.max(x), 100)
 yz = ll4(xz, popt[0], popt[1], popt[2], popt[3])
 plt.plot(xz, yz, '-'), plt.plot(x, y, 'o')
-plt.title('Dose-response curve - EC50: {}, \nHills slope: {}, R\u00b2 of fit: {}'.format(np.round(popt[2], 2), np.round(hill_slope, 2), np.round(r2, 3)))
+locs, labels = plt.xticks()
+plt.xticks(locs, np.round(10 ** locs, 2))
+plt.xlabel('Dose')
+plt.ylabel('Response')
+plt.title('Dose-response curve - EC50: {}, \nHills slope: {}, R\u00b2 of fit: {}'.format(np.round(10 ** popt[2], 2), np.round(hill_slope, 2), np.round(r2, 3)))
 plt.show()
